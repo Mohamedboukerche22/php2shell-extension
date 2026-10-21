@@ -1,0 +1,38 @@
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# node
+node_modules/
+npm-debug.log*
+package-lock.json
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# local build artefacts / test output
+*.zip
+*.crx
+*.xpi
+*.pem
+*.key
+coverage/
+out/
+dist/
+build/
+
+# never commit credentials
+token.txt
+.env
+.env.*
+*.token
+credentials.json
+secrets.json

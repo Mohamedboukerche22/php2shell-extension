@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run the unit tests (no php-cgi needed)
+        run: node --test tests/engine.test.js
+
+      - name: Install php-cgi (optional — the integration tests skip without it)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y php-cgi || echo "::warning::php-cgi unavailable — integration tests will skip"
+        continue-on-error: true
+
+      - name: Run the integration tests
+        run: node --test tests/background.test.js
+        env:
+          PHP_CGI: /usr/bin/php-cgi

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PHP2Shell Extension</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <!--
+    ==========================================================================
+     PHP2Shell Extension — popup UI
+    ==========================================================================
+     ⚠️  AUTHORIZED USE ONLY. This panel sends active PHP-execution payloads
+     and can run operating-system commands on the target host. Use it only on
+     systems you own or have written permission to test. The "SIM" console mode
+     is completely offline and is the default.
+    ==========================================================================
+  -->
+  <div class="app">
+
+    <!-- ===================== Header ===================== -->
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo" aria-hidden="true">&gt;_</span>
+        <div class="brand-text">
+          <h1>PHP2Shell</h1>
+          <p>PHP code-execution auditor</p>
+        </div>
+      </div>
+      <span class="ver" id="version">v1.0.0</span>
+    </header>
+
+    <div class="warn-strip" id="warn-strip">
+      <strong>Authorized use only.</strong> Active probes execute PHP on the target.
+      Keep the target inside your engagement scope.
+    </div>
+
+    <!-- ===================== Section 1 — Target + Status ===================== -->
+    <section class="card" id="target-card">
+      <div class="row-label">CURRENT TAB</div>
+      <div class="url-box" id="url-box" title="—">
+        <span id="target-url">loading…</span>
+      </div>
+      <div class="meta-row">
+        <span class="chip" id="target-host">—</span>
+        <span class="chip" id="target-path">—</span>
+        <span class="chip" id="target-title">—</span>
+      </div>
+    </section>
+
+    <section class="card" id="scan-card">
+      <div class="status-row">
+        <div class="status-pill idle" id="status-pill">
+          <span class="dot"></span><span id="status-text">Idle</span>
+        </div>
+        <div class="severity" id="severity-wrap" hidden>
+          <span class="sev-label">severity</span>
+          <span class="sev-value" id="severity-value">—</span>
+        </div>
+      </div>
+
+      <div class="progress" id="progress" hidden><div class="bar"></div></div>
+
+      <p class="status-detail" id="status-detail">
+        Press <em>Scan Website</em> to analyse the current tab for php-cgi argument
+        injection and web-shell indicators.
+      </p>
+
+      <div class="controls">
+        <button id="scan-btn" class="btn btn-primary" type="button">
+          <span class="btn-ico">⟳</span> Scan Website
+        </button>
+        <label class="switch" title="Probe more parameters and more vectors (slower)">
+          <input type="checkbox" id="deep-toggle">
+          <span class="switch-box"></span><span>Deep</span>
+        </label>
+      </div>
+
+      <label class="consent" id="consent-row">
+        <input type="checkbox" id="consent">
+        <span class="consent-text">
+          I am authorized to test this system. Active probes send PHP payloads and
+          may run commands on the host.
+        </span>
+      </label>
+    </section>
+
+    <!-- ===================== Evidence ===================== -->
+    <section class="card" id="evidence-card" hidden>
+      <div class="card-head">
+        <h2>Evidence</h2>
+        <span class="count" id="evidence-count">0</span>
+      </div>
+      <ul class="evidence-list" id="evidence-list"></ul>
+    </section>
+
+    <!-- ===================== Section 2 — Mini-Console ===================== -->
+    <section class="card console-card" id="console-card" hidden>
+      <div class="card-head">
+        <h2>Mini-Console</h2>
+        <label class="filter-opt" title="reduce HTML output to its readable text">
+          <input type="checkbox" id="filter-html" checked> strip HTML
+        </label>
+      </div>
+
+      <p class="console-hint" id="console-hint">
+        Every command runs on the target through the confirmed vector — keep it inside your scope.
+      </p>
+
+      <div class="terminal" id="terminal" tabindex="0" aria-live="polite"></div>
+
+      <div class="danger-bar" id="danger-bar" hidden>
+        <span id="danger-text">This command looks destructive.</span>
+        <button type="button" class="btn btn-danger" id="danger-run">Run anyway</button>
+        <button type="button" class="btn btn-ghost" id="danger-cancel">Cancel</button>
+      </div>
+
+      <form class="cmd-row" id="cmd-form" autocomplete="off">
+        <span class="prompt">$</span>
+        <input id="cmd-input" type="text" spellcheck="false" autocomplete="off"
+               placeholder="whoami" disabled>
+        <button id="run-btn" class="btn btn-run" type="submit" disabled>Run</button>
+      </form>
+
+      <div class="chips" id="quick-cmds">
+        <button type="button" class="qchip" data-cmd="whoami">whoami</button>
+        <button type="button" class="qchip" data-cmd="id">id</button>
+        <button type="button" class="qchip" data-cmd="uname -a">uname -a</button>
+        <button type="button" class="qchip" data-cmd="pwd">pwd</button>
+        <button type="button" class="qchip" data-cmd="ls -la">ls -la</button>
+        <button type="button" class="qchip" data-cmd="cat /etc/passwd">cat /etc/passwd</button>
+        <button type="button" class="qchip" data-cmd="php -v">php -v</button>
+      </div>
+
+      <div class="save-row" id="save-row">
+        <button type="button" class="btn btn-save" id="save-all" disabled>⬇ Download all files</button>
+        <label class="save-opt" title="use `ls -laR` and walk the sub-directories">
+          <input type="checkbox" id="save-recursive" disabled> recursive
+        </label>
+        <input type="text" id="save-dir" class="save-dir" spellcheck="false"
+               autocomplete="off" placeholder="directory (default: script dir)" disabled>
+      </div>
+      <p class="save-note" id="save-note"></p>
+    </section>
+
+    <!-- ===================== Audit log ===================== -->
+    <section class="card" id="log-card">
+      <div class="card-head">
+        <h2>Audit log</h2>
+        <button type="button" class="mini-btn" id="clear-log">clear</button>
+      </div>
+      <ul class="log-list" id="log-list"><li class="log-empty">no activity yet</li></ul>
+    </section>
+
+    <footer class="foot">
+      <span id="foot-state">idle</span>
+      <span class="dot-sep">·</span>
+      <span>no telemetry · traffic only to the scanned host</span>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
