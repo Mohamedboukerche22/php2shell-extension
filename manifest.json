@@ -43,7 +43,7 @@
 
   "browser_specific_settings": {
     "gecko": {
-      "id": "php2shell-exention@example.org",
+      "id": "php2shell-extension@example.org",
       "strict_min_version": "121.0"
     }
   }

@@ -184,12 +184,12 @@ the engine pure, and the four ground rules (no scope widening, no telemetry, evi
 not a finding).
 
 ```bash
-git clone https://github.com/Mohamedboukerche22/php2shell-exention.git
-cd php2shell-exention
+git clone https://github.com/Mohamedboukerche22/php2shell-extension.git
+cd php2shell-extension
 npm test
 ```
 
-Issues and PRs: <https://github.com/Mohamedboukerche22/php2shell-exention/issues>
+Issues and PRs: <https://github.com/Mohamedboukerche22/php2shell-extension/issues>
 
 ---
 

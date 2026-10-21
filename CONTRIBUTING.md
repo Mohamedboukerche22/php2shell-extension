@@ -43,8 +43,8 @@ there are so few false positives, and it is also the hardest part to maintain.
 ## Dev setup
 
 ```bash
-git clone https://github.com/Mohamedboukerche22/php2shell-exention.git
-cd php2shell-exention
+git clone https://github.com/Mohamedboukerche22/php2shell-extension.git
+cd php2shell-extension
 npm test                       # 43 tests, no php-cgi needed for the unit part
 ```
 
